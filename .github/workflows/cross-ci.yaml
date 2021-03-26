@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, yuichielectric-group]
+        os: [ubuntu-latest, WindowsDesktop]
       fail-fast: false
 
     env:
