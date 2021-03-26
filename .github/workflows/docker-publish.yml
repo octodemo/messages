@@ -21,21 +21,12 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  pull:
+  pull-push:
     runs-on: ubuntu-latest
     steps:
       - name: Pull image
         run: docker pull $IMAGE_NAME:$VERSION
 
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: pull
-
-    runs-on: ubuntu-latest
-
-    steps:
       - uses: actions/checkout@v2
       
       - name: Log into registry
