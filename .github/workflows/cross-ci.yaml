@@ -24,7 +24,7 @@ jobs:
       AUTOWARE_SYSROOT: /sysroot/generic-aarch64
 
     container:
-      image: autoware/build:generic-aarch64-melodic-bleedingedge
+      image: docker.pkg.github.com/octodemo/messages/autowarebuild:generic-aarch64-melodic-bleedingedge
 
     steps:
 
