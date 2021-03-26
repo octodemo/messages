@@ -17,7 +17,10 @@ jobs:
       fail-fast: false
 
     container:
-      image: autoware/autoware:bleedingedge-melodic-base
+      image: docker.pkg.github.com/octodemo/messages/autoware:bleedingedge-melodic-base
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
       env:
         ROS_DISTRO: melodic
       options: --user root
