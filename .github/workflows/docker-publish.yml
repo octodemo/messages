@@ -15,8 +15,8 @@ on:
 
 env:
   # TODO: Change variable to your image's name.
-  IMAGE_NAME: autowarebuild
-  VERSION: generic-aarch64-melodic-bleedingedge
+  IMAGE_NAME: autoware
+  VERSION: bleedingedge-melodic-base
 
 jobs:
   # Run tests.
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull image
-        run: docker pull autoware/build:$VERSION
+        run: docker pull autoware/autoware:$VERSION
 
       - uses: actions/checkout@v2
       
@@ -42,5 +42,5 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           
-          docker tag autoware/build:$VERSION $IMAGE_ID:$VERSION
+          docker tag autoware/autoware:$VERSION $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
