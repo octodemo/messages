@@ -8,6 +8,15 @@ jobs:
 
     # CodeQL runs on ubuntu-latest and windows-latest
     runs-on: ubuntu-latest
+    
+    container:
+      image: docker.pkg.github.com/octodemo/messages/autoware:bleedingedge-melodic-base
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        ROS_DISTRO: melodic
+      options: --user root
 
     steps:
     - name: Checkout repository
@@ -22,8 +31,8 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+    # - name: Autobuild
+    #   uses: github/codeql-action/autobuild@v1
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
@@ -35,6 +44,20 @@ jobs:
     #- run: |
     #   make bootstrap
     #   make release
+
+    - name: Prepare repo
+      run: |
+        mkdir -p src_tmp/ && mv `find -maxdepth 1 -not -name . -not -name src_tmp` src_tmp/ && mv src_tmp/ src/
+        rosdep update && apt-get update -qqq
+        rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+        
+    - name: Build and test repo
+      run: |
+        bash -c 'source /opt/ros/$ROS_DISTRO/setup.bash; \
+        colcon build --cmake-args -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage" -DCMAKE_BUILD_TYPE=Debug; \
+        colcon build --cmake-target tests --cmake-args -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage" -DCMAKE_BUILD_TYPE=Debug; \
+        colcon test; \
+        colcon test-result --verbose'
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
